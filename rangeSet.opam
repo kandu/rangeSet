@@ -1,0 +1,15 @@
+opam-version: "1.2"
+maintainer: "zandoye@gmail.com"
+authors: [ "ZAN DoYe" ]
+homepage: "https://bitbucket.org/zandoye/rangeset/"
+bug-reports: "https://bitbucket.org/zandoye/rangeset/issues"
+license: "MIT"
+dev-repo: "hg://https://bitbucket.org/zandoye/rangeset"
+build: [
+  [make]
+]
+depends: [
+  "jbuilder" {build}
+]
+available: [ocaml-version >= "4.02.3"]
+
