@@ -1,0 +1,18 @@
+syntax: glob
+
+**/*.annot
+
+**/.\#*
+**/*~
+**/Session.vim
+**/.*.swp
+
+**/*.o
+**/*.a
+**/*.so
+**/*.cm*
+_build
+jbuild-workspace
+.merlin
+rangeSet.install
+
