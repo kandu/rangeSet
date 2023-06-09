@@ -114,8 +114,11 @@ module type OrderedType_Discrete =
   sig
     include OrderedType
 
-    val pred : t -> t (** predecessor *)
-    val succ : t -> t (** successor *)
+    (** predecessor *)
+    val pred : t -> t
+
+    (** successor *)
+    val succ : t -> t
   end
 (** Input signature of the functor {!RangeSet.Make_Discrete}. *)
 

@@ -1,0 +1,5 @@
+(library
+ (name rangeSet)
+  (public_name rangeSet)
+  (libraries result trie)
+  (flags (:standard -safe-string)))

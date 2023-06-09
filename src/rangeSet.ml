@@ -123,7 +123,7 @@ module Make0(Ord: OrderedType)=
       | _-> (extract_point p1) = (extract_point p2)
 
     (* if the points are closed *)
-    let are_closed ps=
+    let _are_closed ps=
       let rec check inc value ps=
         match ps with
         | []-> inc
@@ -137,20 +137,6 @@ module Make0(Ord: OrderedType)=
       | Exc p::tail-> check false p tail
 
 
-
-    module Option = struct
-      type 'a t= 'a option
-      let is_none opt= match opt with None-> true | _-> false
-      let is_some opt= match opt with None-> false | _-> true
-      let value ~default opt=
-        match opt with
-        | Some value-> value
-        | None-> default
-      let value_exn opt=
-        match opt with
-        | Some value-> value
-        | None-> raise Not_found
-    end
 
     module OrdR = struct
       type t= range
@@ -184,7 +170,7 @@ module Make0(Ord: OrderedType)=
     let mem elt t=
       let point= Inc elt in
       let dummy_range= { start= point; stop= point; } in
-      let l, v, r= S.split dummy_range t in
+      let l, v, _r= S.split dummy_range t in
       if v then v
       else
         match S.max_elt_opt l with
@@ -209,17 +195,17 @@ module Make0(Ord: OrderedType)=
           | None-> false
         in
         if merge_prev && merge_next then
-          let prev= Option.value_exn prev
-          and next= Option.value_exn next in
+          let prev= Option.get prev
+          and next= Option.get next in
           t |> S.remove prev
             |> S.remove next
             |> S.add { start= prev.start; stop= next.stop }
         else if merge_prev then
-          let prev= Option.value_exn prev in
+          let prev= Option.get prev in
           t |> S.remove prev
             |> S.add { start= prev.start; stop= point }
         else if merge_next then
-          let next= Option.value_exn next in
+          let next= Option.get next in
           t |> S.remove next
             |> S.add { start= point; stop= next.stop }
         else
@@ -245,7 +231,7 @@ module Make0(Ord: OrderedType)=
     let remove elt t=
       let point= Inc elt in
       let dummy_range= { start= point; stop= point; } in
-      let l, v, r= S.split dummy_range t in
+      let l, v, _r= S.split dummy_range t in
       if v then
         let range= S.find dummy_range t in
         if point_include_right point range.stop then
@@ -363,7 +349,7 @@ module Make0(Ord: OrderedType)=
       let expand_left range t=
         match S.max_elt_opt t with
         | Some max->
-          let l, _, r= S.split max t in
+          let l, _, _r= S.split max t in
           let _, s= diff max range in S.union l s
         | None-> S.empty
       in

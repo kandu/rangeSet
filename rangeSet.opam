@@ -1,15 +1,16 @@
 opam-version: "1.2"
 maintainer: "zandoye@gmail.com"
 authors: [ "ZAN DoYe" ]
-homepage: "https://bitbucket.org/zandoye/rangeset/"
-bug-reports: "https://bitbucket.org/zandoye/rangeset/issues"
+homepage: "https://github.com/kandu/rangeSet/"
+bug-reports: "https://github.com/kandu/rangeSet/issues"
 license: "MIT"
-dev-repo: "hg://https://bitbucket.org/zandoye/rangeset"
+dev-repo: "git+https://https://github.com/kandu/rangeSet"
 build: [
-  [make]
+  ["dune" "build" "-p" name "-j" jobs]
 ]
 depends: [
-  "jbuilder" {build}
+  "ocaml" {>= "4.02.3"}
+  "dune" {>= "1.1.0"}
+  "result"
 ]
-available: [ocaml-version >= "4.02.3"]
 

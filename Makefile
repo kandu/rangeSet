@@ -1,17 +1,17 @@
 default:
-	jbuilder build
+	dune build
 
 install:
-	jbuilder install
+	dune install
 
 uninstall:
-	jbuilder uninstall
+	dune uninstall
 
 doc:
-	jbuilder build @doc
+	dune build @doc
 
 clean:
-	jbuilder clean
+	dune clean
 
 runtest:
-	jbuilder runtest
+	dune runtest

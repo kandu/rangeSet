@@ -1,0 +1,6 @@
+(library
+  (name rangeSet_test)
+  (flags (:standard -safe-string))
+  (libraries rangeSet)
+  (inline_tests)
+  (preprocess (pps ppx_expect)))
