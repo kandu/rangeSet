@@ -190,9 +190,18 @@ let%test_module _= (module struct
     { start= Inc 11; stop= Inc 13 };
     ]
 
-  let%expect_test "iter"=
-    IS.iter (Printf.printf " %d") s5;
+  let%expect_test "iter_elt"=
+    IS.iter_elt (Printf.printf " %d") s5;
     [%expect "2 3 6 7 8 9 11 12 13"]
+
+  let%expect_test "map_elt"=
+    s5
+      |>IS.map_elt (fun v->
+        let r= v * 2 in
+        if r > 20 then 20
+        else r)
+      |> IS.iter_elt (Printf.printf " %d");
+    [%expect "4 6 12 14 16 18 20"]
 
   let%expect_test "elements"= IS.elements s5
     |> List.iter (Printf.printf " %d");

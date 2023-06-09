@@ -465,7 +465,8 @@ module type S_Discrete =
     val min_elt_opt: t -> elt option
     val max_elt: t -> elt
     val max_elt_opt: t -> elt option
-    val iter: (elt -> unit) -> t -> unit
+    val iter_elt: (elt -> unit) -> t -> unit
+    val map_elt: (elt -> elt) -> t -> t
     val elements: t -> elt list
 end
 
@@ -499,13 +500,27 @@ module Make_Discrete(Ord: OrderedType_Discrete): S_Discrete with type elt = Ord.
         end
       else ()
 
-    let iter f s=
+    let iter_elt f s=
       let iter_range (r:range)=
         let min= min_elt_of_range r
         and max= max_elt_of_range r in
         iter_to f Ord.succ min max
       in
       S.iter iter_range s
+
+    let rec map_to f succ start stop acc=
+      if start <= stop then
+        let acc= add (f start) acc in
+        map_to f succ (succ start) stop acc
+      else acc
+
+    let map_elt f s=
+      let fold_set (r:range) acc=
+        let min= min_elt_of_range r
+        and max= max_elt_of_range r in
+        union acc (map_to f Ord.succ min max empty)
+      in
+      S.fold fold_set s empty
 
     let list_from_range succ range=
       let rec gen succ start stop=

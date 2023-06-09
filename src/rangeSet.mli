@@ -114,11 +114,11 @@ module type OrderedType_Discrete =
   sig
     include OrderedType
 
-    (** predecessor *)
     val pred : t -> t
+    (** predecessor *)
 
-    (** successor *)
     val succ : t -> t
+    (** successor *)
   end
 (** Input signature of the functor {!RangeSet.Make_Discrete}. *)
 
@@ -146,10 +146,17 @@ module type S_Discrete =
       (with respect to the [Ord.compare] ordering), or [None]
       if the set is empty. *)
 
-    val iter: (elt -> unit) -> t -> unit
-    (** [iter f s] applies [f] in turn to all elements of [s].
+    val iter_elt: (elt -> unit) -> t -> unit
+    (** [iter_elt f s] applies [f] in turn to all elements of [s].
       The elements of [s] are presented to [f] in increasing order
       with respect to the ordering over the type of the elements. *)
+
+    val map_elt: (elt -> elt) -> t -> t
+    (** [map_elt f s] is the set whose elements are [f a0],[f a1]... [f
+        aN], where [a0],[a1]...[aN] are the elements of [s].
+
+       The elements are passed to [f] in increasing order
+       with respect to the ordering over the type of the elements. *)
 
     val elements: t -> elt list
     (** Return the list of all elements of the given set.
