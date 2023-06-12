@@ -1,3 +1,13 @@
+(*
+ * test.ml
+ * -----------
+ * Copyright : (c) 2018 - 2023, ZAN DoYe <zandoye@gmail.com>
+ * Licence   : MIT
+ *
+ * This file is a part of rangeSet.
+ *)
+
+
 open RangeSet
 
 let%test_module _= (module struct
@@ -6,11 +16,9 @@ let%test_module _= (module struct
       type t= int
       let compare= compare
       let to_string= string_of_int
-      let pred n= n - 1
-      let succ n= n + 1
     end
 
-  module IS = Make_Discrete(Int)
+  module IS = Continuous.Make(Int)
 
   let s1= IS.of_point (Exc 1) (Exc 7)
   let s2= IS.of_point (Inc 1) (Inc 7)
@@ -182,30 +190,180 @@ let%test_module _= (module struct
     in
     test s3 s4;
     test s4 s3
+end)
+
+let%test_module _= (module struct
+  module Int=
+    struct
+      type t= int
+      let compare= compare
+      let to_string= string_of_int
+      let pred n= n - 1
+      let succ n= n + 1
+    end
+
+  module IS = Discrete.Make(Int)
+
+  let s1= IS.of_point 1 7
+  let s2= IS.of_point 2 8
+
+  let%test "s1 mem 1"= not (IS.mem 0 s1)
+  let%test "s1 mem 2"= not (IS.mem 8 s1)
+
+  let%test "s2 mem 1"= not (IS.mem 0 s2)
+  let%test "s2 mem 2"= not (IS.mem 1 s2)
+  let%test "s2 mem 3"= IS.mem 7 s2
+  let%test "s2 mem 4"= IS.mem 8 s2
+
+  let s_add= IS.empty
+  let s_add= IS.add 1 s_add
+  let%expect_test "add 1"= s_add
+    |> IS.to_string |> print_endline;
+    [%expect "[ (1, 1) ]"]
+  let s_add= IS.add 2 s_add
+  let%expect_test "add 2"= s_add
+    |> IS.to_string |> print_endline;
+    [%expect "[ (1, 2) ]"]
+  let%expect_test "add 3"= IS.of_point 1 2 |> IS.add 2
+    |> IS.to_string |> print_endline;
+    [%expect "[ (1, 2) ]"]
+  let%expect_test "add 4"= IS.of_point 1 2 |> IS.add 3
+    |> IS.to_string |> print_endline;
+    [%expect "[ (1, 3) ]"]
+  let%expect_test "add 5"= IS.of_point 1 2 |> IS.add 4
+    |> IS.to_string |> print_endline;
+    [%expect "[ (1, 2); (4, 4) ]"]
+  let%expect_test "add 6"=
+    IS.union
+      (IS.of_point 1 2)
+      (IS.of_point 4 5)
+      |> IS.add 3
+      |> IS.to_string |> print_endline;
+    [%expect "[ (1, 5) ]"]
+
+  let s_remove= IS.of_point 1 3
+  let s_remove= IS.remove 1 s_remove
+  let%expect_test "remove 1"= 
+    s_remove |> IS.to_string |> print_endline;
+    [%expect "[ (2, 3) ]"]
+  let s_remove= IS.remove 3 s_remove
+  let%expect_test "remove 2"= 
+    s_remove |> IS.to_string |> print_endline;
+    [%expect "[ (2, 2) ]"]
+  let s_remove= IS.remove 2 s_remove
+  let%expect_test "remove 3"= 
+    s_remove |> IS.to_string |> print_endline;
+    [%expect "[  ]"]
+  let s_remove= IS.remove 10 s_remove
+  let%expect_test "remove 4"= 
+    s_remove |> IS.to_string |> print_endline;
+    [%expect "[  ]"]
+
+
+  let s3= IS.of_ranges [
+    { start= 1; stop= 4 };
+    { start= 7; stop= 9 } ;
+    { start= 13; stop= 15 };
+    { start= 19; stop= 21 };
+    { start= 25; stop= 35 };
+    ]
+
+  let%expect_test "union"=
+    let test s1 s2=
+      IS.union s1 s2
+        |> IS.to_string |> print_endline;
+      [%expect "[ (-5, -4); (1, 4); (7, 10); (13, 21); (25, 35) ]"]
+    in
+    let s4= IS.of_ranges [
+      { start= -5; stop= -4 };
+      { start= 2; stop= 3 };
+      { start= 9; stop= 10 };
+      { start= 15; stop= 19 }; ]
+    in
+    test s3 s4;
+    test s4 s3
+
+  let%expect_test "unmerge1"=
+    IS.unmerge { start= 7; stop= 8 } s3
+    |> IS.to_string |> print_endline;
+    [%expect "[ (1, 4); (9, 9); (13, 15); (19, 21); (25, 35) ]"]
+  let%expect_test "unmerge2"=
+    IS.unmerge { start= 6; stop= 16 } s3
+    |> IS.to_string |> print_endline;
+    [%expect "[ (1, 4); (19, 21); (25, 35) ]"]
+  let%expect_test "unmerge3"=
+    IS.unmerge { start= 8; stop= 14 } s3
+      |> IS.to_string |> print_endline;
+    [%expect "[ (1, 4); (7, 7); (15, 15); (19, 21); (25, 35) ]"]
+  let%expect_test "unmerge3"=
+    IS.unmerge { start= 29; stop= 31 } s3
+      |> IS.to_string |> print_endline;
+    [%expect "[ (1, 4); (7, 9); (13, 15); (19, 21); (25, 28); (32, 35) ]"]
+
+  let s3= IS.of_ranges [
+    { start= 1; stop= 4 };
+    { start= 7; stop= 10 } ;
+    { start= 13; stop= 15 };
+    { start= 19; stop= 21 };
+    { start= 25; stop= 35 };
+    ]
+
+  let%expect_test "diff"=
+    let s4= IS.of_ranges [
+      { start= 0; stop= 2 };
+      { start= 9; stop= 11 };
+      { start= 12; stop= 23 };
+      { start= 28; stop= 32 };
+      ]
+    in
+    IS.diff s3 s4 |> IS.to_string |> print_endline;
+    [%expect "[ (3, 4); (7, 8); (25, 27); (33, 35) ]"]
+
+  let%test "inter1"= IS.inter s1 s2 = (IS.of_range {start=2; stop=7} )
+  let%test "inter2"= IS.inter s2 s1 = (IS.of_range {start=2; stop=7} )
+  let%expect_test "inter3"=
+    let test s1 s2= IS.inter s1 s2
+      |> IS.to_string |> print_endline;
+      [%expect "[ (1, 4); (7, 10); (13, 14) ]"]
+    in
+    let s4= IS.of_ranges [
+      { start= 0; stop= 4 };
+      { start= 7; stop= 8 };
+      { start= 9; stop= 10 };
+      { start= 12; stop= 14 };
+      ]
+    in
+    test s3 s4;
+    test s4 s3
 
   let s5= IS.of_ranges [
-    { start= Exc 1; stop= Exc 4 };
-    { start= Exc 5; stop= Inc 7 } ;
-    { start= Inc 8; stop= Exc 10 };
-    { start= Inc 11; stop= Inc 13 };
+    { start= 1; stop= 3 };
+    { start= 5; stop= 7 } ;
+    { start= 8; stop= 10 };
+    { start= 11; stop= 13 };
     ]
 
   let%expect_test "iter_elt"=
     IS.iter_elt (Printf.printf " %d") s5;
-    [%expect "2 3 6 7 8 9 11 12 13"]
+    [%expect "1 2 3 5 6 7 8 9 10 11 12 13"]
 
   let%expect_test "map_elt"=
-    s5
+    let s6= s5
       |>IS.map_elt (fun v->
         let r= v * 2 in
-        if r > 20 then 20
-        else r)
-      |> IS.iter_elt (Printf.printf " %d");
-    [%expect "4 6 12 14 16 18 20"]
+        match r with
+        | 22-> 22
+        | 24-> 23
+        | 26-> 24
+        | _-> r)
+    in
+    s6 |> IS.iter_elt (Printf.printf " %d");
+    [%expect "2 4 6 10 12 14 16 18 20 22 23 24"];
+    s6 |> IS.to_string |> print_endline;
+    [%expect "[ (2, 2); (4, 4); (6, 6); (10, 10); (12, 12); (14, 14); (16, 16); (18, 18); (20, 20); (22, 24) ]"]
 
   let%expect_test "elements"= IS.elements s5
     |> List.iter (Printf.printf " %d");
-    [%expect "2 3 6 7 8 9 11 12 13"]
-    
+    [%expect "1 2 3 5 6 7 8 9 10 11 12 13"]
 end)
 
