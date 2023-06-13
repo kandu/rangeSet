@@ -49,7 +49,7 @@ module type S =
     val elements: t -> elt list
   end
 
-module Make(Ord: OrderedType): S with type elt = Ord.t =
+module Make(Ord: OrderedType): S with type elt := Ord.t =
   struct
     type elt= Ord.t
     type range= { start: elt; stop: elt }
