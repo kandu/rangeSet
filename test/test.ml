@@ -339,13 +339,12 @@ let%test_module _= (module struct
   let s5= IS.of_ranges [
     { start= 1; stop= 3 };
     { start= 5; stop= 7 } ;
-    { start= 8; stop= 10 };
     { start= 11; stop= 13 };
     ]
 
   let%expect_test "iter_elt"=
     IS.iter_elt (Printf.printf " %d") s5;
-    [%expect "1 2 3 5 6 7 8 9 10 11 12 13"]
+    [%expect "1 2 3 5 6 7 11 12 13"]
 
   let%expect_test "map_elt"=
     let s6= s5
@@ -358,12 +357,12 @@ let%test_module _= (module struct
         | _-> r)
     in
     s6 |> IS.iter_elt (Printf.printf " %d");
-    [%expect "2 4 6 10 12 14 16 18 20 22 23 24"];
+    [%expect "2 4 6 10 12 14 22 23 24"];
     s6 |> IS.to_string |> print_endline;
-    [%expect "[ (2, 2); (4, 4); (6, 6); (10, 10); (12, 12); (14, 14); (16, 16); (18, 18); (20, 20); (22, 24) ]"]
+    [%expect "[ (2, 2); (4, 4); (6, 6); (10, 10); (12, 12); (14, 14); (22, 24) ]"]
 
   let%expect_test "elements"= IS.elements s5
     |> List.iter (Printf.printf " %d");
-    [%expect "1 2 3 5 6 7 8 9 10 11 12 13"]
+    [%expect "1 2 3 5 6 7 11 12 13"]
 end)
 

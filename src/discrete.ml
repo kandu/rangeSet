@@ -122,17 +122,17 @@ module Make(Ord: OrderedType): S with type elt := Ord.t =
           | None-> false
         in
         if merge_prev && merge_next then
-          let prev= Option.get prev
-          and next= Option.get next in
+          let prev= Utils.option_get prev
+          and next= Utils.option_get next in
           t |> S.remove prev
             |> S.remove next
             |> S.add { start= prev.start; stop= next.stop }
         else if merge_prev then
-          let prev= Option.get prev in
+          let prev= Utils.option_get prev in
           t |> S.remove prev
             |> S.add { start= prev.start; stop= elt }
         else if merge_next then
-          let next= Option.get next in
+          let next= Utils.option_get next in
           t |> S.remove next
             |> S.add { start= elt; stop= next.stop }
         else
@@ -409,15 +409,15 @@ module Make(Ord: OrderedType): S with type elt := Ord.t =
       S.fold fold_set s empty
 
     let list_from_range succ range=
-      let rec gen succ start stop=
+      let rec gen succ start stop acc=
         if start <= stop then
-          start :: gen succ (succ start) stop
+          gen succ (succ start) stop (start::acc)
         else
-          []
+          List.rev acc
       in
       let min= min_elt_of_range range
       and max= max_elt_of_range range in
-      gen succ min max
+      gen succ min max []
 
     let elements s= S.elements s
       |> List.map (list_from_range Ord.succ)

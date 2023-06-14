@@ -31,7 +31,7 @@ module type OrderedType = sig
   val succ : t -> t
   (** [succ t] is the successor value of t. *)
 end
-(** Input signature of the functor {!RangeSet.Continuous.Make}. *)
+(** Input signature of the functor {!RangeSet.Discrete.Make}. *)
 
 
 module type S = sig
@@ -137,7 +137,7 @@ module type S = sig
   (** Return the list of all elements of the given set.
     The returned list is sorted in increasing order
     with respect to the ordering [Ord.compare],
-    where Ord is the argument given to [Set.Make_Discrete]. *)
+    where Ord is the argument given to [Discrete.Make]. *)
 end
 (** Output signature of the functor {!RangeSet.Discrete.Make}. *)
 

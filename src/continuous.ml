@@ -258,17 +258,17 @@ module Make(Ord: OrderedType)=
           | None-> false
         in
         if merge_prev && merge_next then
-          let prev= Option.get prev
-          and next= Option.get next in
+          let prev= Utils.option_get prev
+          and next= Utils.option_get next in
           t |> S.remove prev
             |> S.remove next
             |> S.add { start= prev.start; stop= next.stop }
         else if merge_prev then
-          let prev= Option.get prev in
+          let prev= Utils.option_get prev in
           t |> S.remove prev
             |> S.add { start= prev.start; stop= point }
         else if merge_next then
-          let next= Option.get next in
+          let next= Utils.option_get next in
           t |> S.remove next
             |> S.add { start= point; stop= next.stop }
         else

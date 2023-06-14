@@ -105,7 +105,7 @@ module type S = sig
   val inter : t -> t -> t
   (** Set intersection. *)
 end
-(** Output signature of the functor {!RangeSet.Discrete.Make}. *)
+(** Output signature of the functor {!RangeSet.Continuous.Make}. *)
 
 
 module Make : functor (Ord : OrderedType) -> S with type elt:= Ord.t
