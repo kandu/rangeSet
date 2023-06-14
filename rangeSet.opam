@@ -11,6 +11,5 @@ build: [
 depends: [
   "ocaml" {>= "4.02.3"}
   "dune" {>= "1.1.0"}
-  "result"
 ]
 
