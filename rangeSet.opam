@@ -1,4 +1,4 @@
-opam-version: "1.2"
+opam-version: "2.0"
 maintainer: "zandoye@gmail.com"
 authors: [ "ZAN DoYe" ]
 homepage: "https://github.com/kandu/rangeSet/"
@@ -12,4 +12,8 @@ depends: [
   "ocaml" {>= "4.02.3"}
   "dune" {>= "1.1.0"}
 ]
+synopsis: "rangeSet"
+description: """
+This module implements two range set data structure: continuous and discrete range set.
 
+The elements are represented as ranges internally, and is therefore efficient for large set of adjacent elements."""
